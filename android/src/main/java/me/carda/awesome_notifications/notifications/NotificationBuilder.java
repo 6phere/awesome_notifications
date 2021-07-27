@@ -1,6 +1,8 @@
 package me.carda.awesome_notifications.notifications;
 
+import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 
@@ -20,7 +22,9 @@ import com.github.arturogutierrez.BadgesNotSupportedException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -42,6 +46,7 @@ import me.carda.awesome_notifications.notifications.models.NotificationChannelMo
 import me.carda.awesome_notifications.notifications.models.NotificationContentModel;
 import me.carda.awesome_notifications.notifications.models.PushNotification;
 import me.carda.awesome_notifications.notifications.models.returnedData.ActionReceived;
+import me.carda.awesome_notifications.services.AlarmService;
 import me.carda.awesome_notifications.utils.BitmapUtils;
 import me.carda.awesome_notifications.utils.BooleanUtils;
 import me.carda.awesome_notifications.utils.DateUtils;
@@ -56,6 +61,7 @@ import com.github.arturogutierrez.Badges;
 public class NotificationBuilder {
 
     public static String TAG = "NotificationBuilder";
+    private NotificationManager mNotifyManager;
 
     public Notification createNotification(Context context, PushNotification pushNotification) throws AwesomeNotificationException {
 
@@ -86,9 +92,43 @@ public class NotificationBuilder {
                 PendingIntent.FLAG_CANCEL_CURRENT
         );
 
+        //----2. PABLO------------------
+        //----------------Creamos el intent que va a ejecutar la alarma despues de 30 segundos de haber pulsado el boton Show the most basic notification --------------
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        int alarmId = new Random().nextInt(Integer.MAX_VALUE);
+        Log.i(TAG, "createAlarm: Putting alarmIdKey: " + alarmId);
+
+        Calendar now = Calendar.getInstance();
+        now.add(Calendar.SECOND, 30);
+
+        AlarmManager.AlarmClockInfo alarmClockInfo = null;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            alarmClockInfo = new AlarmManager.AlarmClockInfo(now.getTimeInMillis(), null);
+            alarmManager.setAlarmClock(alarmClockInfo, getPendingIntent(context, alarmId));
+        }
+
+        //------------------------------FIN------------------------------------------------------
+
         NotificationCompat.Builder builder = getNotificationBuilderFromModel(context, pushNotification, pendingIntent, pendingDeleteIntent);
 
         return builder.build();
+    }
+
+    private PendingIntent getPendingIntent(Context context, int alarmId) {
+
+        Intent intent = new Intent(context, AlarmService.class);
+
+        // Not required in all cases, but add to maintain simplicity
+        intent.putExtra("alarmIdKey", alarmId);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return PendingIntent.getForegroundService(context, alarmId, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+        } else
+            return PendingIntent.getService(context, alarmId, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+
     }
 
     public Intent buildNotificationIntentFromModel(Context context, String ActionReference, PushNotification pushNotification) {
