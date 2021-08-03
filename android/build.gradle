@@ -23,12 +23,16 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 30
+    buildToolsVersion "30.0.2"
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 21
     }
     lintOptions {
         disable 'InvalidPackage'
+    }
+    buildFeatures {
+        viewBinding = true
     }
 }
 
@@ -51,6 +55,13 @@ dependencies {
     //implementation 'com.google.firebase:firebase-messaging:21.0.0'
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "com.ncorti:slidetoact:0.9.0"
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation "androidx.preference:preference:1.1.1"
+    implementation 'com.intuit.sdp:sdp-android:1.0.6'
 
     def lifecycle_version = "2.2.0"
     def arch_version = "2.1.0"

@@ -1,0 +1,3 @@
+<style name="SlideToActView">
+    <item name="outer_color">?colorAccent</item>
+</style>

@@ -19,7 +19,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import me.carda.awesome_notifications.activities.AlarmTriggerActivity;
+import me.carda.awesome_notifications.alarm.AlarmTriggerActivity;
 import me.carda.awesome_notifications.helper.NotificationHelper;
 
 // Note: Define service in AndroidManifest.xml

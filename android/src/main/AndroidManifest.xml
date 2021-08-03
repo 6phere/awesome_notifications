@@ -23,13 +23,51 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <application>
+    <application
+        android:theme="@style/Theme.MaterialComponents">
 
         <activity android:name=".activities.AlarmTriggerActivity"
             android:excludeFromRecents="true"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
             android:turnScreenOn="true" />
+
+        <activity
+            android:name="me.carda.awesome_notifications.settings.SettingsActivity"
+            android:parentActivityName="me.carda.awesome_notifications.MainActivity" />
+
+        <receiver
+            android:name="me.carda.awesome_notifications.misc.AlarmBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Set flags to ensure that AlarmTrigger activity is shown on lock screen -->
+        <activity
+            android:name="me.carda.awesome_notifications.alarm.AlarmTriggerActivity"
+            android:excludeFromRecents="true"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true" />
+
+        <service
+            android:name="me.carda.awesome_notifications.alarm.services.AlarmService"
+            android:enabled="true" />
+        <service
+            android:name="me.carda.awesome_notifications.alarm.services.ReSchedAlarmService"
+            android:enabled="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <activity android:name="me.carda.awesome_notifications.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <service
             android:name=".services.AlarmService"

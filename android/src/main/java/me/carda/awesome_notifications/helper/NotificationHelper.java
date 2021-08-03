@@ -12,7 +12,7 @@ import androidx.core.app.NotificationCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import me.carda.awesome_notifications.activities.AlarmTriggerActivity;
+import me.carda.awesome_notifications.alarm.AlarmTriggerActivity;
 
 public class NotificationHelper {
 
@@ -65,5 +65,16 @@ public class NotificationHelper {
 
         // Return a Notification object to be used by startForeground()
         return builder.build();
+    }
+
+
+    public void deliverPersistentNotification() {
+
+
+    }
+
+    // Use silenceTimeout to show actual alarmId instead of current time
+    public void deliverMissedNotification(long alarmTime) {
+
     }
 }
