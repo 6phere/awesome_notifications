@@ -1,8 +1,11 @@
 package me.carda.awesome_notifications.utils;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
+import java.io.InputStream;
 
 import me.carda.awesome_notifications.notifications.enumeratos.MediaSource;
 
@@ -15,7 +18,7 @@ public class AudioUtils extends MediaUtils {
 
     public static Bitmap getAudioFromSource(Context context, String bitmapPath) {
 
-        switch (MediaUtils.getMediaSourceType(bitmapPath)){
+        switch (MediaUtils.getMediaSourceType(bitmapPath)) {
 
             case Resource:
                 return getAudioFromResource(context, bitmapPath);
@@ -25,8 +28,7 @@ public class AudioUtils extends MediaUtils {
                 return null;
 
             case Asset:
-                /// TODO MISSING IMPLEMENTATION
-                return null;
+                return getAudioFromAsset(context, bitmapPath);
 
             case Network:
                 /// TODO MISSING IMPLEMENTATION
@@ -62,7 +64,7 @@ public class AudioUtils extends MediaUtils {
         return MediaSource.Unknown;
     }
 
-    public static int getAudioResourceId(Context context, String audioReference){
+    public static int getAudioResourceId(Context context, String audioReference) {
         audioReference = AudioUtils.cleanMediaPath(audioReference);
         String[] reference = audioReference.split("\\/");
 
@@ -77,7 +79,7 @@ public class AudioUtils extends MediaUtils {
             String name = String.format("res_%1s", label);
             resId = context.getResources().getIdentifier(name, type, context.getPackageName());
 
-            if(resId == 0){
+            if (resId == 0) {
                 resId = context.getResources().getIdentifier(label, type, context.getPackageName());
             }
 
@@ -90,9 +92,20 @@ public class AudioUtils extends MediaUtils {
         return 0;
     }
 
-    private static Bitmap getAudioFromResource(Context context, String bitmapReference){
+    private static Bitmap getAudioFromResource(Context context, String bitmapReference) {
         int resourceId = getAudioResourceId(context, bitmapReference);
         return BitmapFactory.decodeResource(context.getResources(), resourceId);
+    }
+
+    private static Bitmap getAudioFromAsset(Context context, String bitmapReference) {
+        try {
+            AssetManager manager = context.getAssets();
+            InputStream is = manager.open(bitmapReference.replace("asset://", "flutter_assets/"));
+            return BitmapFactory.decodeStream(is);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     public static Boolean isValidAudio(Context context, String mediaPath) {
@@ -114,8 +127,7 @@ public class AudioUtils extends MediaUtils {
             }
 
             if (matchMediaType(MEDIA_VALID_ASSET, mediaPath)) {
-                // TODO MISSING IMPLEMENTATION
-                return false;
+                return isValidAudioAsset(context, mediaPath);
             }
 
         }
@@ -123,9 +135,22 @@ public class AudioUtils extends MediaUtils {
     }
 
     private static Boolean isValidAudioResource(Context context, String name) {
-        if(name != null){
+        if (name != null) {
             int resourceId = getAudioResourceId(context, name);
             return resourceId > 0;
+        }
+        return false;
+    }
+
+    private static Boolean isValidAudioAsset(Context context, String name) {
+        if (name != null) {
+            try {
+                AssetManager manager = context.getAssets();
+                InputStream is = manager.open(name.replace("asset://", "flutter_assets/"));
+                return is.available() > 0;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }

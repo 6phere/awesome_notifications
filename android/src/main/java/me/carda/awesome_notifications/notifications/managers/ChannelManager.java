@@ -7,7 +7,7 @@ import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-
+import java.io.File;
 import java.util.List;
 
 import androidx.core.app.NotificationManagerCompat;
@@ -91,10 +91,27 @@ public class ChannelManager {
             uri = RingtoneManager.getDefaultUri(defaultRingtoneKey);
 
         } else {
-            int soundResourceId = AudioUtils.getAudioResourceId(context, soundSource);
-            if(soundResourceId > 0){
-                uri = Uri.parse("android.resource://" + context.getPackageName() + "/" + soundResourceId);
+            switch (AudioUtils.getAudioSourceType(soundSource)){
+                case Resource:
+                    int soundResourceId = AudioUtils.getAudioResourceId(context, soundSource);
+                    if(soundResourceId > 0){
+                        uri = Uri.parse("android.resource://" + context.getPackageName() + "/" + soundResourceId);
+                    }
+                    break;
+                case File:
+                    /// TODO MISSING IMPLEMENTATION
+                    break;
+                case Asset:
+                    uri = Uri.parse("file:///flutter_assets/".concat(soundSource.replace("asset://","")));
+                    break;
+                case Network:
+                    /// TODO MISSING IMPLEMENTATION
+                    break;
+
+                case Unknown:
+                    break;
             }
+
         }
         return uri;
     }
@@ -144,6 +161,8 @@ public class ChannelManager {
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannel newNotificationChannel = null;
             newNotificationChannel = new NotificationChannel(newChannel.getChannelKey(), newChannel.channelName, newChannel.importance.ordinal());
+
+            newNotificationChannel.setImportance(5);
 
             newNotificationChannel.setDescription(newChannel.channelDescription);
 

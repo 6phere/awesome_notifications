@@ -32,6 +32,7 @@ import androidx.core.app.RemoteInput;
 
 import me.carda.awesome_notifications.AwesomeNotificationsPlugin;
 import me.carda.awesome_notifications.Definitions;
+import me.carda.awesome_notifications.alarm.AlarmTriggerActivity;
 import me.carda.awesome_notifications.notifications.broadcastReceivers.DismissedNotificationReceiver;
 import me.carda.awesome_notifications.notifications.broadcastReceivers.KeepOnTopActionReceiver;
 import me.carda.awesome_notifications.notifications.enumeratos.ActionButtonType;
@@ -46,7 +47,6 @@ import me.carda.awesome_notifications.notifications.models.NotificationChannelMo
 import me.carda.awesome_notifications.notifications.models.NotificationContentModel;
 import me.carda.awesome_notifications.notifications.models.PushNotification;
 import me.carda.awesome_notifications.notifications.models.returnedData.ActionReceived;
-import me.carda.awesome_notifications.services.AlarmService;
 import me.carda.awesome_notifications.utils.BitmapUtils;
 import me.carda.awesome_notifications.utils.BooleanUtils;
 import me.carda.awesome_notifications.utils.DateUtils;
@@ -68,7 +68,8 @@ public class NotificationBuilder {
         Intent intent = buildNotificationIntentFromModel(
                 context,
                 Definitions.SELECT_NOTIFICATION,
-                pushNotification
+                pushNotification,
+                AlarmTriggerActivity.class
         );
 
         Intent deleteIntent = buildNotificationIntentFromModel(
@@ -92,50 +93,16 @@ public class NotificationBuilder {
                 PendingIntent.FLAG_CANCEL_CURRENT
         );
 
-        //----2. PABLO------------------
-        //----------------Creamos el intent que va a ejecutar la alarma despues de 30 segundos de haber pulsado el boton Show the most basic notification --------------
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        int alarmId = new Random().nextInt(Integer.MAX_VALUE);
-        Log.i(TAG, "createAlarm: Putting alarmIdKey: " + alarmId);
-
-        Calendar now = Calendar.getInstance();
-        now.add(Calendar.SECOND, 30);
-
-        AlarmManager.AlarmClockInfo alarmClockInfo = null;
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            alarmClockInfo = new AlarmManager.AlarmClockInfo(now.getTimeInMillis(), null);
-            alarmManager.setAlarmClock(alarmClockInfo, getPendingIntent(context, alarmId));
-        }
-
-        //------------------------------FIN------------------------------------------------------
-
         NotificationCompat.Builder builder = getNotificationBuilderFromModel(context, pushNotification, pendingIntent, pendingDeleteIntent);
 
         return builder.build();
-    }
-
-    private PendingIntent getPendingIntent(Context context, int alarmId) {
-
-        Intent intent = new Intent(context, AlarmService.class);
-
-        // Not required in all cases, but add to maintain simplicity
-        intent.putExtra("alarmIdKey", alarmId);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            return PendingIntent.getForegroundService(context, alarmId, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-        } else
-            return PendingIntent.getService(context, alarmId, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-
     }
 
     public Intent buildNotificationIntentFromModel(Context context, String ActionReference, PushNotification pushNotification) {
         return buildNotificationIntentFromModel(context, ActionReference, pushNotification, getNotificationTargetActivityClass(context));
     }
 
-    public Intent buildNotificationIntentFromModel(Context context, String ActionReference, PushNotification pushNotification, Class<?> targetAction) {
+    public Intent buildNotificationIntentFromModel(Context context, String ActionReference, PushNotification pushNotification, Class targetAction) {
         Intent intent = new Intent(context, targetAction);
 
         intent.setAction(ActionReference);
@@ -223,6 +190,7 @@ public class NotificationBuilder {
             throw new AwesomeNotificationException("Channel '" + pushNotification.content.channelKey + "' does not exist or is disabled");
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, pushNotification.content.channelKey);
+        builder.setDefaults(Notification.DEFAULT_SOUND);
 
         setGrouping(context, pushNotification, channel, builder);
 
@@ -257,7 +225,12 @@ public class NotificationBuilder {
             builder.setChannelId(channel.getChannelKey());
         }
 
-        builder.setContentIntent(pendingIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            builder.setFullScreenIntent(pendingIntent, true);
+        else
+            // Set on notification click intent for pre oreo
+            builder.setContentIntent(pendingIntent);
+
         builder.setDeleteIntent(deleteIntent);
 
         return builder;
@@ -532,7 +505,11 @@ public class NotificationBuilder {
         Uri uri = null;
 
         if (BooleanUtils.getValue(channelModel.playSound)) {
-            uri = ChannelManager.retrieveSoundResourceUri(context, channelModel.defaultRingtoneType, channelModel.soundSource);
+            String soundSource = pushNotification.content.customSound;
+            if (soundSource == null) {
+                soundSource = channelModel.soundSource;
+            }
+            uri = ChannelManager.retrieveSoundResourceUri(context, channelModel.defaultRingtoneType, soundSource);
         }
 
         builder.setSound(uri);

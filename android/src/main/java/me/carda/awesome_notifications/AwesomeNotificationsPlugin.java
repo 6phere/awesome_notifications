@@ -1003,24 +1003,6 @@ public class AwesomeNotificationsPlugin
                 channelsData
         );
 
-        //---------1. PABLO-------------
-        //Cuando se arranca la aplicacion, creamos el notification channel que recibirá la notificación de la alarma
-
-        NotificationManager mNotifyManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        // Pre O does not support / need notification channel
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-            return;
-        NotificationChannel notificationChannel = new NotificationChannel(
-                "primary_channel_id", "Alarmzy", NotificationManager.IMPORTANCE_HIGH);
-        notificationChannel.enableLights(true);
-        notificationChannel.setLightColor(Color.GREEN);
-        notificationChannel.enableVibration(true);
-        notificationChannel.setDescription("Description channel");
-        mNotifyManager.createNotificationChannel(notificationChannel);
-        android.util.Log.i("NotificationHelper", "createNotificationChannel: Channel Created");
-
-        //-----------------------------FIN------------------------------
-
         if (AwesomeNotificationsPlugin.debug)
             Log.d("NotificationHelper", "Awesome Notifications service initialized");
 

@@ -1,6 +1,7 @@
 package me.carda.awesome_notifications.alarm;
 
-import android.app.Application;
+import android.app.KeyguardManager;
+import android.app.KeyguardManager.KeyguardLock;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -21,27 +22,35 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
 import com.ncorti.slidetoact.SlideToActView;
-import me.carda.awesome_notifications.R;
-import me.carda.awesome_notifications.Utils.Constants.Constants;
-import me.carda.awesome_notifications.Utils.Constants.PreferenceKeys;
-import me.carda.awesome_notifications.helper.NotificationHelper;
-import me.carda.awesome_notifications.services.AlarmService;
-import me.carda.awesome_notifications.databinding.ActivityAlarmTriggerBinding;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Locale;
+import java.util.Map;
+
+import me.carda.awesome_notifications.AwesomeNotificationsPlugin;
+import me.carda.awesome_notifications.Utils.Constants.Constants;
+import me.carda.awesome_notifications.databinding.ActivityAlarmTriggerBinding;
+import me.carda.awesome_notifications.helper.NotificationHelper;
+import me.carda.awesome_notifications.utils.JsonUtils;
+import me.carda.awesome_notifications.notifications.managers.CreatedManager;
+import me.carda.awesome_notifications.notifications.enumeratos.NotificationLifeCycle;
+import me.carda.awesome_notifications.Definitions;
+
+import android.service.notification.StatusBarNotification;
+import android.app.Notification;
+import 	android.app.PendingIntent;
+
+import com.gw.swipeback.SwipeBackLayout;
 
 public class AlarmTriggerActivity extends AppCompatActivity {
 
     // UI Components
     private ActivityAlarmTriggerBinding binding;
-    private TextView tvAlarmTime, tvAlarmTitle;
+    private TextView tvAlarmTime, tvAlarmDate, tvAlarmTitle;
+    private SwipeBackLayout swipeBackLayout;
     private ImageView ivWeatherIcon;
 
     // vars
@@ -52,6 +61,8 @@ public class AlarmTriggerActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private String actionBtnPref;
     private PowerManager.WakeLock wakeLock;
+    private String notificationJson;
+    private int alarmId = -1;
 
 
     //----------------------------- Lifecycle methods --------------------------------------------//
@@ -59,16 +70,21 @@ public class AlarmTriggerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try{
+        try {
             binding = ActivityAlarmTriggerBinding.inflate(getLayoutInflater());
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
         setContentView(binding.getRoot());
 
+        getSupportActionBar().hide();
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getWindow().getDecorView().setBackgroundColor(0xff222222);
+
+
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+        wakeLock = powerManager.newWakeLock((PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP),
                 "Alarmzy::AlarmTriggerWakeLock");
 
         /* Acquire wakelock with 15 minutes timeout in case its not released from stopAlarmService()
@@ -89,43 +105,64 @@ public class AlarmTriggerActivity extends AppCompatActivity {
 
         // Get views
         tvAlarmTime = binding.triggerAlarmTime;
+        tvAlarmDate = binding.triggerAlarmDate;
         tvAlarmTitle = binding.triggerAlarmTitle;
-        //SlideToActView btnDismissAlarm = binding.btnDismissAlarm;
-        //SlideToActView btnSnoozeAlarm = binding.btnSnoozeAlarm;
+        SlideToActView btnSnoozeAlarm = binding.btnSnoozeAlarm;
+        SwipeBackLayout swipeBackLayout = binding.swipeBackLayout;
 
         Intent intent = getIntent();
 
         /* This can produce npe
          * Check if key exists then fetch value
          */
-        int alarmId = -1;
-        if (intent.hasExtra("alarmIdKey"))
-            alarmId = intent.getIntExtra("alarmIdKey", -1);
+        if (intent.hasExtra(Definitions.NOTIFICATION_ID))
+            alarmId = intent.getIntExtra(Definitions.NOTIFICATION_ID, -1);
+
+        notificationJson = intent.getStringExtra(Definitions.NOTIFICATION_JSON);
+        Map<String, Object> notificationData = JsonUtils.fromJson(notificationJson);
+        String title = (String) ((Map) notificationData.get("content")).get("body");
+        if (title != null)
+            tvAlarmTitle.setText(title);
+
+        formatDate();
 
         Log.i(TAG, "onCreate: Got alarmIdKey: " + alarmId);
-
-
-        // SlideToActView Listeners
-
-        // Dismiss Alarm
-     /*   btnDismissAlarm.setOnSlideCompleteListener(new SlideToActView.OnSlideCompleteListener() {
+        swipeBackLayout.setSwipeBackListener(new SwipeBackLayout.OnSwipeBackListener() {
             @Override
-            public void onSlideComplete(@NonNull SlideToActView slideToActView) {
-                // Stop service and finish this activity
-                stopAlarmService();
+            public void onViewPositionChanged(View mView, float swipeBackFraction, float SWIPE_BACK_FACTOR) {
+
             }
-        });*/
+
+            @Override
+            public void onViewSwipeFinished(View mView, boolean isEnd) {
+                if (isEnd)
+                    stopAlarmService();
+            }
+        });
 
         // Snooze Alarm
-       /* btnSnoozeAlarm.setOnSlideCompleteListener(new SlideToActView.OnSlideCompleteListener() {
+        btnSnoozeAlarm.setOnSlideCompleteListener(new SlideToActView.OnSlideCompleteListener() {
             @Override
             public void onSlideComplete(@NonNull SlideToActView slideToActView) {
                 snoozeAlarm();
             }
-        });*/
+        });
 
         // Check silenceTimeout
         silenceTimeout(alarmId);
+    }
+
+    private void formatDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",
+                Locale.getDefault());
+        String formattedTime = sdf.format(System.currentTimeMillis());
+        tvAlarmTime.setText(formattedTime);
+
+
+        sdf = new SimpleDateFormat("EEE, d MMM",
+                Locale.getDefault());
+        formattedTime = sdf.format(System.currentTimeMillis());
+        tvAlarmDate.setText(formattedTime);
     }
 
     @Override
@@ -137,18 +174,13 @@ public class AlarmTriggerActivity extends AppCompatActivity {
     }
 
 
-
     // Display alarm title and time of snoozed alarm
     private void displaySnoozedInfo() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 // Simply show current time and "Snoozed Alarm" as title
-
-                SimpleDateFormat sdf = new SimpleDateFormat("hh:mm aa",
-                        Locale.getDefault());
-                String formattedTime = sdf.format(System.currentTimeMillis());
-                tvAlarmTime.setText(formattedTime);
+                formatDate();
 
                 tvAlarmTitle.setText("snoozed_alarm");
             }
@@ -195,8 +227,8 @@ public class AlarmTriggerActivity extends AppCompatActivity {
                 /* AlarmEntity is null for snoozed alarm
                  * Get actual alarm time by: CurrentTime - silenceTimeout
                  */
-                    nh.deliverMissedNotification(
-                            System.currentTimeMillis() - (Long.parseLong(silenceTimeStr) * 60000));
+                nh.deliverMissedNotification(
+                        System.currentTimeMillis() - (Long.parseLong(silenceTimeStr) * 60000));
 
                 stopAlarmService();
             }
@@ -210,8 +242,6 @@ public class AlarmTriggerActivity extends AppCompatActivity {
     // Stop service and finish activity
     public void stopAlarmService() {
         wakeLock.release();
-        Intent intent = new Intent(AlarmTriggerActivity.this, AlarmService.class);
-        stopService(intent);
 
         /* Runnable has not yet executed
          * and alarm has been dismissed by user
@@ -219,11 +249,46 @@ public class AlarmTriggerActivity extends AppCompatActivity {
          */
         if (handler != null && silenceRunnable != null)
             handler.removeCallbacks(silenceRunnable);
+
+        Context context = getApplicationContext();
+
+        /*if (AwesomeNotificationsPlugin.appLifeCycle == NotificationLifeCycle.AppKilled) {
+            String packageName = context.getPackageName();
+            Intent mainIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
+            if (mainIntent != null) {
+                mainIntent.putExtra(Definitions.EXTRA_BROADCAST_MESSAGE, notificationJson);
+                mainIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(mainIntent);
+            }
+        }*/
+        NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        launchAction(notifManager);
+        notifManager.cancelAll();
         finish();
     }
 
-    public void snoozeAlarm() {
+    private void launchAction(NotificationManager notifManager) {
+        StatusBarNotification[] sbns = notifManager.getActiveNotifications();
 
+        for (StatusBarNotification sbn : sbns) {
+            try {
+                if (sbn == null) {
+                    Log.i(TAG, "sbn is null");
+                    continue;
+                }
+                Notification n = sbn.getNotification();
+                if (n.actions.length >0) {
+                    PendingIntent pi = n.actions[0].actionIntent;
+                    if (pi != null) {
+                        pi.send();
+                    }
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    public void snoozeAlarm() {
         stopAlarmService();
     }
 
@@ -272,7 +337,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
                 if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
 
                     // Get power key pref
-                    actionBtnPref = sharedPref.getString("power_btn_action", Constants.ACTION_DO_NOTHING);
+                    actionBtnPref = sharedPref.getString("power_btn_action", Constants.ACTION_DISMISS);
                     if (actionBtnPref != null)
                         actionBtnHandler(actionBtnPref);
                 }

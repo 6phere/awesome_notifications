@@ -32,6 +32,7 @@ public class NotificationContentModel extends Model {
     public List<Object> actionButtons;
     public Map<String, String> payload;
     public Boolean playSound;
+    public String customSound;
     public String icon;
     public String largeIcon;
     public Boolean locked;
@@ -86,6 +87,7 @@ public class NotificationContentModel extends Model {
         summary = getValueOrDefault(arguments, Definitions.NOTIFICATION_SUMMARY, String.class);
 
         playSound = getValueOrDefault(arguments, Definitions.NOTIFICATION_PLAY_SOUND, Boolean.class);
+        customSound = getValueOrDefault(arguments, Definitions.NOTIFICATION_CUSTOM_SOUND, String.class);
 
         showWhen = getValueOrDefault(arguments, Definitions.NOTIFICATION_SHOW_WHEN, Boolean.class);
         locked = getValueOrDefault(arguments, Definitions.NOTIFICATION_LOCKED, Boolean.class);
@@ -176,6 +178,9 @@ public class NotificationContentModel extends Model {
 
         if(this.largeIcon != null)
             returnedObject.put(Definitions.NOTIFICATION_LARGE_ICON, this.largeIcon);
+
+        if(this.customSound != null)
+            returnedObject.put(Definitions.NOTIFICATION_CUSTOM_SOUND, this.customSound);
 
         if(this.bigPicture != null)
             returnedObject.put(Definitions.NOTIFICATION_BIG_PICTURE, this.bigPicture);

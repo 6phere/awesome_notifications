@@ -534,7 +534,19 @@ Future<void> greenNotification(int id, bool delayLEDTests) async {
 ************************************************ */
 
 Future<void> showCustomSoundNotification(int id) async {
-  await AwesomeNotifications().createNotification(
+  await AwesomeNotifications().initialize(
+      'resource://drawable/res_app_icon',
+      [NotificationChannel(
+      icon: 'resource://drawable/res_power_ranger_thunder',
+      channelKey: "custom_sound",
+      channelName: "Custom sound notifications",
+      channelDescription: "Notifications with custom sound",
+      playSound: true,
+      soundSource: 'asset://assets/sounds/morph_power_rangers.m4a',
+      defaultColor: Colors.red,
+      ledColor: Colors.red,
+      vibrationPattern: lowVibrationPattern)]);
+  /*await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
           channelKey: "custom_sound",
@@ -545,7 +557,7 @@ Future<void> showCustomSoundNotification(int id) async {
           color: Colors.yellow,
           payload: {
         'secret': 'the green ranger and the white ranger are the same person'
-      }));
+      }));*/
 }
 
 /* *********************************************

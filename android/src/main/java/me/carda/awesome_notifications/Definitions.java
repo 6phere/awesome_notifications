@@ -154,6 +154,7 @@ public interface Definitions {
     String NOTIFICATION_DISPLAY_ON_BACKGROUND = "displayOnBackground";
     String NOTIFICATION_ICON = "icon";
     String NOTIFICATION_PLAY_SOUND = "playSound";
+    String NOTIFICATION_CUSTOM_SOUND = "customSound";
     String NOTIFICATION_SOUND_SOURCE = "soundSource";
     String NOTIFICATION_ENABLE_VIBRATION = "enableVibration";
     String NOTIFICATION_VIBRATION_PATTERN = "vibrationPattern";

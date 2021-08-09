@@ -1,62 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.gw.swipeback.SwipeBackLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeBackLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:keepScreenOn="true"
-    tools:context=".alarm.AlarmTriggerActivity">
+    app:directionMode="bottom"
+    app:maskAlpha="125"
+    app:swipeBackFactor="0.5">
 
-    <TextView
-        android:id="@+id/trigger_alarm_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/_50sdp"
-        android:fontFamily="sans-serif-thin"
-        android:text="00:00 AM"
-        android:textAppearance="?attr/textAppearanceHeadline6"
-        android:textSize="@dimen/_26sdp" />
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:keepScreenOn="true"
+            tools:context=".alarm.AlarmTriggerActivity">
 
-    <TextView
-        android:id="@+id/trigger_alarm_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/trigger_alarm_time"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/_10sdp"
-        android:fontFamily="sans-serif-thin"
-        android:text="Alarm Title"
-        android:textAppearance="?attr/textAppearanceHeadline6"
-        android:textSize="@dimen/_16sdp" />
+            <TextView
+                android:id="@+id/trigger_alarm_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_50sdp"
+                android:fontFamily="sans-serif-thin"
+                android:text="00:00 AM"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:textSize="@dimen/_26sdp" />
 
-    <com.ncorti.slidetoact.SlideToActView
-        android:id="@+id/btn_dismiss_alarm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        app:area_margin="@dimen/_3sdp"
-        app:icon_margin="@dimen/_3sdp"
-        app:outer_color="?attr/colorPrimary"
-        app:slider_height="@dimen/_40sdp"
-        app:slider_locked="false"
-        app:text="Slide To Dismiss"
-        app:text_style="bold" />
+            <TextView
+                android:id="@+id/trigger_alarm_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/trigger_alarm_time"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:fontFamily="sans-serif-thin"
+                android:text="Date"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:textSize="@dimen/_16sdp" />
 
-    <com.ncorti.slidetoact.SlideToActView
-        android:id="@+id/btn_snooze_alarm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btn_dismiss_alarm"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/_20sdp"
-        app:area_margin="@dimen/_3sdp"
-        app:icon_margin="@dimen/_3sdp"
-        app:outer_color="?attr/colorPrimary"
-        app:slider_height="@dimen/_40sdp"
-        app:slider_locked="false"
-        app:slider_reversed="true"
-        app:text="Slide To Snooze"
-        app:text_style="bold" />
 
-</RelativeLayout>
+            <TextView
+                android:id="@+id/trigger_alarm_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/trigger_alarm_date"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:fontFamily="sans-serif-thin"
+                android:text="Alarm Title"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:textSize="@dimen/_16sdp" />
+
+
+            <com.ncorti.slidetoact.SlideToActView
+                android:id="@+id/btn_snooze_alarm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/_80sdp"
+                app:area_margin="@dimen/_3sdp"
+                app:icon_margin="@dimen/_3sdp"
+                app:outer_color="#eb8a52"
+                app:slider_height="@dimen/_40sdp"
+                app:slider_locked="false"
+                app:slider_reversed="true"
+                app:text="Slide To Snooze"
+                app:text_style="bold" />
+
+
+            <TextView
+                android:id="@+id/trigger_alarm_dismiss"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/_20sdp"
+                android:fontFamily="sans-serif-thin"
+                android:text="Swipe up to dismiss alarm"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:textSize="@dimen/_16sdp" />
+
+        </RelativeLayout>
+</com.gw.swipeback.SwipeBackLayout>

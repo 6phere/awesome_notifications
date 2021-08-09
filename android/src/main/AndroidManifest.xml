@@ -22,19 +22,18 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
 
     <application
         android:theme="@style/Theme.MaterialComponents">
 
-        <activity android:name=".activities.AlarmTriggerActivity"
+        <activity
+            android:name="me.carda.awesome_notifications.settings.SettingsActivity"
+            android:parentActivityName="me.carda.awesome_notifications.MainActivity"
             android:excludeFromRecents="true"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
-            android:turnScreenOn="true" />
-
-        <activity
-            android:name="me.carda.awesome_notifications.settings.SettingsActivity"
-            android:parentActivityName="me.carda.awesome_notifications.MainActivity" />
+            android:turnScreenOn="true"/>
 
         <receiver
             android:name="me.carda.awesome_notifications.misc.AlarmBroadcastReceiver"
@@ -51,7 +50,8 @@
             android:excludeFromRecents="true"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
-            android:turnScreenOn="true" />
+            android:turnScreenOn="true"
+            />
 
         <service
             android:name="me.carda.awesome_notifications.alarm.services.AlarmService"
@@ -61,17 +61,16 @@
             android:enabled="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <activity android:name="me.carda.awesome_notifications.MainActivity">
+        <activity android:name="me.carda.awesome_notifications.MainActivity"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name=".services.AlarmService"
-            android:enabled="true" />
 
         <!-- <service
             android:name=".services.firebase.FCMService"

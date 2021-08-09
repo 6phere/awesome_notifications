@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorAccent">#eb8a52</color>
     <color name="slidetoact_white">#FFFFFF</color>
-    <color name="slidetoact_defaultAccent">#FF4081</color>
+    <color name="slidetoact_defaultAccent">#eb8a52</color>
 </resources>
