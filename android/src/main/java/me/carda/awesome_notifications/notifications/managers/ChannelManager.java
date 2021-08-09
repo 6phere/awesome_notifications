@@ -102,7 +102,8 @@ public class ChannelManager {
                     /// TODO MISSING IMPLEMENTATION
                     break;
                 case Asset:
-                    uri = Uri.parse("file:///flutter_assets/".concat(soundSource.replace("asset://","")));
+                    uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+                    //uri = Uri.parse("file:///flutter_assets/".concat(soundSource.replace("asset://","")));
                     break;
                 case Network:
                     /// TODO MISSING IMPLEMENTATION

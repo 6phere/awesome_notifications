@@ -143,15 +143,17 @@ public class AudioUtils extends MediaUtils {
     }
 
     private static Boolean isValidAudioAsset(Context context, String name) {
+        Boolean result = false;
         if (name != null) {
             try {
                 AssetManager manager = context.getAssets();
                 InputStream is = manager.open(name.replace("asset://", "flutter_assets/"));
-                return is.available() > 0;
+                result = is.available() > 0;
+                is.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return false;
+        return result;
     }
 }

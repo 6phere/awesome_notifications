@@ -41,7 +41,10 @@ import me.carda.awesome_notifications.Definitions;
 
 import android.service.notification.StatusBarNotification;
 import android.app.Notification;
-import 	android.app.PendingIntent;
+import android.app.PendingIntent;
+import android.media.MediaPlayer;
+import android.media.AudioAttributes;
+import android.content.res.AssetFileDescriptor;
 
 import com.gw.swipeback.SwipeBackLayout;
 
@@ -51,7 +54,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
     private ActivityAlarmTriggerBinding binding;
     private TextView tvAlarmTime, tvAlarmDate, tvAlarmTitle;
     private SwipeBackLayout swipeBackLayout;
-    private ImageView ivWeatherIcon;
+    private MediaPlayer mediaPlayer;
 
     // vars
     private static final String TAG = "AlarmTriggerActivity";
@@ -121,6 +124,29 @@ public class AlarmTriggerActivity extends AppCompatActivity {
         notificationJson = intent.getStringExtra(Definitions.NOTIFICATION_JSON);
         Map<String, Object> notificationData = JsonUtils.fromJson(notificationJson);
         String title = (String) ((Map) notificationData.get("content")).get("body");
+        String customSound = (String) ((Map) notificationData.get("content")).get("customSound");
+
+        mediaPlayer = new MediaPlayer();
+        AssetFileDescriptor afd;
+        try {
+            if (customSound != null) {
+                afd = getAssets().openFd(customSound.replace("asset://", "flutter_assets/"));
+
+                mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                afd.close();
+                mediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .build());
+                mediaPlayer.setLooping(true);
+
+                mediaPlayer.prepare();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mediaPlayer.start();
+
         if (title != null)
             tvAlarmTitle.setText(title);
 
@@ -241,6 +267,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
 
     // Stop service and finish activity
     public void stopAlarmService() {
+        mediaPlayer.stop();
         wakeLock.release();
 
         /* Runnable has not yet executed
@@ -277,7 +304,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
                     continue;
                 }
                 Notification n = sbn.getNotification();
-                if (n.actions.length >0) {
+                if (n.actions.length > 0) {
                     PendingIntent pi = n.actions[0].actionIntent;
                     if (pi != null) {
                         pi.send();
