@@ -190,7 +190,7 @@ public class NotificationBuilder {
             throw new AwesomeNotificationException("Channel '" + pushNotification.content.channelKey + "' does not exist or is disabled");
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, pushNotification.content.channelKey);
-        builder.setDefaults(Notification.DEFAULT_SOUND);
+        builder.setCategory(NotificationCompat.CATEGORY_ALARM);
 
         setGrouping(context, pushNotification, channel, builder);
 

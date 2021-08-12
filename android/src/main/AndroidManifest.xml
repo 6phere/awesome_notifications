@@ -27,23 +27,6 @@
     <application
         android:theme="@style/Theme.MaterialComponents">
 
-        <activity
-            android:name="me.carda.awesome_notifications.settings.SettingsActivity"
-            android:parentActivityName="me.carda.awesome_notifications.MainActivity"
-            android:excludeFromRecents="true"
-            android:showOnLockScreen="true"
-            android:showWhenLocked="true"
-            android:turnScreenOn="true"/>
-
-        <receiver
-            android:name="me.carda.awesome_notifications.misc.AlarmBroadcastReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-
         <!-- Set flags to ensure that AlarmTrigger activity is shown on lock screen -->
         <activity
             android:name="me.carda.awesome_notifications.alarm.AlarmTriggerActivity"
@@ -61,10 +44,7 @@
             android:enabled="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <activity android:name="me.carda.awesome_notifications.MainActivity"
-            android:showOnLockScreen="true"
-            android:showWhenLocked="true"
-            android:turnScreenOn="true">
+        <activity android:name="me.carda.awesome_notifications.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
