@@ -112,6 +112,8 @@ public class NotificationScheduler extends AsyncTask<String, Void, Calendar> {
                 if(pushNotification.content.createdLifeCycle == null)
                     pushNotification.content.createdLifeCycle = appLifeCycle;
 
+
+
                 nextValidDate = pushNotification.schedule.getNextValidDate(null);
 
                 /*

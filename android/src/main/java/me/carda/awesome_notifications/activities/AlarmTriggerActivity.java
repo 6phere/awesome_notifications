@@ -52,8 +52,9 @@ public class AlarmTriggerActivity extends AppCompatActivity {
 
     // UI Components
     private ActivityAlarmTriggerBinding binding;
-    private TextView tvAlarmTime, tvAlarmDate, tvAlarmTitle;
+    private TextView tvAlarmTime, tvAlarmDate, tvAlarmTitle, tvAlarmDismiss;
     private SwipeBackLayout swipeBackLayout;
+    private SlideToActView btnSnoozeAlarm;
     private MediaPlayer mediaPlayer;
 
     // vars
@@ -110,8 +111,9 @@ public class AlarmTriggerActivity extends AppCompatActivity {
         tvAlarmTime = binding.triggerAlarmTime;
         tvAlarmDate = binding.triggerAlarmDate;
         tvAlarmTitle = binding.triggerAlarmTitle;
+        tvAlarmDismiss = binding.triggerAlarmDismiss;
         SlideToActView btnSnoozeAlarm = binding.btnSnoozeAlarm;
-        SwipeBackLayout swipeBackLayout = binding.swipeBackLayout;
+        swipeBackLayout = binding.swipeBackLayout;
 
         Intent intent = getIntent();
 
@@ -123,11 +125,28 @@ public class AlarmTriggerActivity extends AppCompatActivity {
 
         notificationJson = intent.getStringExtra(Definitions.NOTIFICATION_JSON);
         Map<String, Object> notificationData = JsonUtils.fromJson(notificationJson);
+
         String title = (String) ((Map) notificationData.get("content")).get("body");
-        String customSound = (String) ((Map) notificationData.get("content")).get("customSound");
+        if (title != null)
+            tvAlarmTitle.setText(title);
+
+        String slideToSnooze = (String) (((Map)((Map)notificationData.get("content")).get("payload")).get("slideToSnooze"));
+        if (slideToSnooze != null)
+            btnSnoozeAlarm.setText(slideToSnooze);
+        String repeatTimes = (String) (((Map)((Map)notificationData.get("content")).get("payload")).get("repeatTimes"));
+        if(repeatTimes==null || repeatTimes=="" || Integer.parseInt(repeatTimes)==1){
+            btnSnoozeAlarm.setVisibility(View.GONE);
+        }
+
+        String swipeToDismiss = (String) (((Map)((Map)notificationData.get("content")).get("payload")).get("swipeToDismiss"));
+        if (swipeToDismiss != null)
+            tvAlarmDismiss.setText(swipeToDismiss);
+
 
         mediaPlayer = new MediaPlayer();
         AssetFileDescriptor afd;
+
+        String customSound = (String) ((Map) notificationData.get("content")).get("customSound");
         try {
             if (customSound != null) {
                 afd = getAssets().openFd(customSound.replace("asset://", "flutter_assets/"));
@@ -147,9 +166,6 @@ public class AlarmTriggerActivity extends AppCompatActivity {
         }
         mediaPlayer.start();
 
-        if (title != null)
-            tvAlarmTitle.setText(title);
-
         formatDate();
 
         Log.i(TAG, "onCreate: Got alarmIdKey: " + alarmId);
@@ -162,7 +178,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
             @Override
             public void onViewSwipeFinished(View mView, boolean isEnd) {
                 if (isEnd)
-                    stopAlarmService();
+                    stopAlarmService(0);
             }
         });
 
@@ -256,7 +272,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
                 nh.deliverMissedNotification(
                         System.currentTimeMillis() - (Long.parseLong(silenceTimeStr) * 60000));
 
-                stopAlarmService();
+                stopAlarmService(0);
             }
         };
         handler.postDelayed(silenceRunnable, silenceTimeoutInt * 60000); // x Minutes * millis
@@ -266,7 +282,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
     //--------------------------------- Misc Methods ---------------------------------------------//
 
     // Stop service and finish activity
-    public void stopAlarmService() {
+    public void stopAlarmService(int action) {
         mediaPlayer.stop();
         wakeLock.release();
 
@@ -279,22 +295,12 @@ public class AlarmTriggerActivity extends AppCompatActivity {
 
         Context context = getApplicationContext();
 
-        /*if (AwesomeNotificationsPlugin.appLifeCycle == NotificationLifeCycle.AppKilled) {
-            String packageName = context.getPackageName();
-            Intent mainIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-            if (mainIntent != null) {
-                mainIntent.putExtra(Definitions.EXTRA_BROADCAST_MESSAGE, notificationJson);
-                mainIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(mainIntent);
-            }
-        }*/
         NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        launchAction(notifManager);
-        notifManager.cancelAll();
+        launchAction(notifManager, action);
         finish();
     }
 
-    private void launchAction(NotificationManager notifManager) {
+    private void launchAction(NotificationManager notifManager, int action) {
         StatusBarNotification[] sbns = notifManager.getActiveNotifications();
 
         for (StatusBarNotification sbn : sbns) {
@@ -305,7 +311,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
                 }
                 Notification n = sbn.getNotification();
                 if (n.actions.length > 0) {
-                    PendingIntent pi = n.actions[0].actionIntent;
+                    PendingIntent pi = n.actions[action].actionIntent;
                     if (pi != null) {
                         pi.send();
                     }
@@ -316,7 +322,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
     }
 
     public void snoozeAlarm() {
-        stopAlarmService();
+        stopAlarmService(1);
     }
 
     private void turnOnScreen() {
@@ -379,7 +385,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
                 sendBroadcast(new Intent().setAction(Constants.ACTION_MUTE));
                 break;
             case Constants.ACTION_DISMISS:
-                stopAlarmService();
+                stopAlarmService(0);
                 break;
             case Constants.ACTION_SNOOZE:
                 snoozeAlarm();
