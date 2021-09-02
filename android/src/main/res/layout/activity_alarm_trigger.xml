@@ -51,7 +51,7 @@
             android:gravity="center"
             android:layout_marginTop="@dimen/_10sdp"
             android:fontFamily="sans-serif-thin"
-            android:text="Alarm Title"
+            android:text=""
             android:textAppearance="?attr/textAppearanceHeadline6"
             android:textSize="@dimen/_16sdp" />
 
@@ -71,7 +71,6 @@
             app:slider_reversed="true"
             app:text="Slide To Snooze"
             app:text_style="bold" />
-
 
         <TextView
             android:id="@+id/trigger_alarm_dismiss"
