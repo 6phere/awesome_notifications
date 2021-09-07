@@ -35,17 +35,6 @@
             android:turnScreenOn="true"
             />
 
-        <service
-            android:name="me.carda.awesome_notifications.alarm.services.AlarmService"
-            android:enabled="true" />
-        <service
-            android:name="me.carda.awesome_notifications.alarm.services.ReSchedAlarmService"
-            android:enabled="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
-        <activity android:name="me.carda.awesome_notifications.MainActivity">
-        </activity>
-
         <!-- <service
             android:name=".services.firebase.FCMService"
             android:exported="false">
