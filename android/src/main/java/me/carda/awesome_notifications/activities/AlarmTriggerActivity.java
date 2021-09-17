@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,6 +27,7 @@ import androidx.preference.PreferenceManager;
 
 import com.ncorti.slidetoact.SlideToActView;
 
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Map;
@@ -53,6 +55,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
     // UI Components
     private ActivityAlarmTriggerBinding binding;
     private TextView tvAlarmTime, tvAlarmDate, tvAlarmTitle, tvAlarmDismiss;
+    private ImageView ivAlarm;
     private SwipeBackLayout swipeBackLayout;
     private SlideToActView btnSnoozeAlarm;
     private MediaPlayer mediaPlayer;
@@ -114,6 +117,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
         tvAlarmDismiss = binding.triggerAlarmDismiss;
         SlideToActView btnSnoozeAlarm = binding.btnSnoozeAlarm;
         swipeBackLayout = binding.swipeBackLayout;
+        ivAlarm = binding.ivAlarm;
 
         Intent intent = getIntent();
 
@@ -130,21 +134,37 @@ public class AlarmTriggerActivity extends AppCompatActivity {
         if (title != null)
             tvAlarmTitle.setText(title);
 
-        String slideToSnooze = (String) (((Map)((Map)notificationData.get("content")).get("payload")).get("slideToSnooze"));
+        String slideToSnooze = (String) (((Map) ((Map) notificationData.get("content")).get("payload")).get("slideToSnooze"));
         if (slideToSnooze != null)
             btnSnoozeAlarm.setText(slideToSnooze);
-        String repeatTimes = (String) (((Map)((Map)notificationData.get("content")).get("payload")).get("repeatTimes"));
-        if(repeatTimes==null || repeatTimes=="" || Integer.parseInt(repeatTimes)==1){
+        String repeatTimes = (String) (((Map) ((Map) notificationData.get("content")).get("payload")).get("repeatTimes"));
+        if (repeatTimes == null || repeatTimes == "" || Integer.parseInt(repeatTimes) == 1) {
             btnSnoozeAlarm.setVisibility(View.GONE);
         }
 
-        String swipeToDismiss = (String) (((Map)((Map)notificationData.get("content")).get("payload")).get("swipeToDismiss"));
+        String swipeToDismiss = (String) (((Map) ((Map) notificationData.get("content")).get("payload")).get("swipeToDismiss"));
         if (swipeToDismiss != null)
             tvAlarmDismiss.setText(swipeToDismiss);
 
 
         mediaPlayer = new MediaPlayer();
         AssetFileDescriptor afd;
+
+        String bigPicture = (String) ((Map) notificationData.get("content")).get("bigPicture");
+        if (bigPicture == null)
+            ivAlarm.setVisibility(View.GONE);
+        else {
+            try {
+                InputStream ims = getAssets().open(bigPicture.replace("asset://", "flutter_assets/"));
+                // load image as Drawable
+                Drawable d = Drawable.createFromStream(ims, null);
+                // set image to ImageView
+                ivAlarm.setImageDrawable(d);
+                ims.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         String customSound = (String) ((Map) notificationData.get("content")).get("customSound");
         try {

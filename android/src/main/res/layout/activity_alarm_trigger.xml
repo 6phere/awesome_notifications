@@ -16,6 +16,14 @@
         android:keepScreenOn="true"
         tools:context=".alarm.AlarmTriggerActivity">
 
+        <ImageView
+            android:id="@+id/iv_alarm"
+            android:layout_centerInParent="true"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
         <TextView
             android:id="@+id/trigger_alarm_time"
             android:layout_width="wrap_content"
@@ -54,6 +62,8 @@
             android:text=""
             android:textAppearance="?attr/textAppearanceHeadline6"
             android:textSize="@dimen/_16sdp" />
+
+
 
 
         <com.ncorti.slidetoact.SlideToActView
