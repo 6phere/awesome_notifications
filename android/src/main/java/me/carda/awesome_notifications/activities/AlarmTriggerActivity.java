@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -48,16 +50,14 @@ import android.media.MediaPlayer;
 import android.media.AudioAttributes;
 import android.content.res.AssetFileDescriptor;
 
-import com.gw.swipeback.SwipeBackLayout;
-
 public class AlarmTriggerActivity extends AppCompatActivity {
 
     // UI Components
     private ActivityAlarmTriggerBinding binding;
-    private TextView tvAlarmTime, tvAlarmDate, tvAlarmTitle, tvAlarmDismiss;
+    private TextView tvAlarmTime, tvAlarmDate, tvAlarmTitle;
     private ImageView ivAlarm;
-    private SwipeBackLayout swipeBackLayout;
     private SlideToActView btnSnoozeAlarm;
+    private SlideToActView btnOpenAlarm;
     private MediaPlayer mediaPlayer;
 
     // vars
@@ -114,11 +114,10 @@ public class AlarmTriggerActivity extends AppCompatActivity {
         tvAlarmTime = binding.triggerAlarmTime;
         tvAlarmDate = binding.triggerAlarmDate;
         tvAlarmTitle = binding.triggerAlarmTitle;
-        tvAlarmDismiss = binding.triggerAlarmDismiss;
-        SlideToActView btnSnoozeAlarm = binding.btnSnoozeAlarm;
-        swipeBackLayout = binding.swipeBackLayout;
+        btnSnoozeAlarm = binding.btnSnoozeAlarm;
+        btnOpenAlarm = binding.btnOpenAlarm;
         ivAlarm = binding.ivAlarm;
-
+        
         Intent intent = getIntent();
 
         /* This can produce npe
@@ -142,9 +141,9 @@ public class AlarmTriggerActivity extends AppCompatActivity {
             btnSnoozeAlarm.setVisibility(View.GONE);
         }
 
-        String swipeToDismiss = (String) (((Map) ((Map) notificationData.get("content")).get("payload")).get("swipeToDismiss"));
-        if (swipeToDismiss != null)
-            tvAlarmDismiss.setText(swipeToDismiss);
+        String slideToOpen = (String) (((Map) ((Map) notificationData.get("content")).get("payload")).get("slideToOpen"));
+        if (slideToOpen != null)
+            btnOpenAlarm.setText(slideToOpen);
 
 
         mediaPlayer = new MediaPlayer();
@@ -173,14 +172,21 @@ public class AlarmTriggerActivity extends AppCompatActivity {
 
                 mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
                 afd.close();
-                mediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .setUsage(AudioAttributes.USAGE_ALARM)
-                        .build());
-                mediaPlayer.setLooping(true);
-
-                mediaPlayer.prepare();
+            }else{
+                Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+                if (alarmUri == null) {
+                    alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+                }
+                mediaPlayer.setDataSource(getApplicationContext(), alarmUri);
             }
+
+            mediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_ALARM)
+                    .build());
+            mediaPlayer.setLooping(true);
+
+            mediaPlayer.prepare();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -189,24 +195,20 @@ public class AlarmTriggerActivity extends AppCompatActivity {
         formatDate();
 
         Log.i(TAG, "onCreate: Got alarmIdKey: " + alarmId);
-        swipeBackLayout.setSwipeBackListener(new SwipeBackLayout.OnSwipeBackListener() {
-            @Override
-            public void onViewPositionChanged(View mView, float swipeBackFraction, float SWIPE_BACK_FACTOR) {
-
-            }
-
-            @Override
-            public void onViewSwipeFinished(View mView, boolean isEnd) {
-                if (isEnd)
-                    stopAlarmService(0);
-            }
-        });
 
         // Snooze Alarm
         btnSnoozeAlarm.setOnSlideCompleteListener(new SlideToActView.OnSlideCompleteListener() {
             @Override
             public void onSlideComplete(@NonNull SlideToActView slideToActView) {
                 snoozeAlarm();
+            }
+        });
+
+        // Open Alarm
+        btnOpenAlarm.setOnSlideCompleteListener(new SlideToActView.OnSlideCompleteListener() {
+            @Override
+            public void onSlideComplete(@NonNull SlideToActView slideToActView) {
+                stopAlarmService(0);
             }
         });
 
@@ -235,19 +237,6 @@ public class AlarmTriggerActivity extends AppCompatActivity {
         unregisterReceiver(PowerBtnReceiver);
     }
 
-
-    // Display alarm title and time of snoozed alarm
-    private void displaySnoozedInfo() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // Simply show current time and "Snoozed Alarm" as title
-                formatDate();
-
-                tvAlarmTitle.setText("snoozed_alarm");
-            }
-        });
-    }
 
 
     //------------------------------- Get Silence Timeout ----------------------------------------//
