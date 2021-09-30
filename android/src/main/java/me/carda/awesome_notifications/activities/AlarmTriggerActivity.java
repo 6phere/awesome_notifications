@@ -90,6 +90,11 @@ public class AlarmTriggerActivity extends AppCompatActivity {
         getWindow().getDecorView().setBackgroundColor(0xff222222);
 
 
+        View decorView = getWindow().getDecorView();
+        // Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock((PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP),
                 "Alarmzy::AlarmTriggerWakeLock");
@@ -235,6 +240,12 @@ public class AlarmTriggerActivity extends AppCompatActivity {
         handler = null;
 
         unregisterReceiver(PowerBtnReceiver);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
 
