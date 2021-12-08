@@ -34,6 +34,9 @@
             android:showWhenLocked="true"
             android:turnScreenOn="true"
             android:screenOrientation="portrait"
+            android:noHistory="true"
+            android:launchMode="singleInstance"
+            android:clearTaskOnLaunch="true"
             />
 
         <!-- <service
