@@ -70,6 +70,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
     private PowerManager.WakeLock wakeLock;
     private String notificationJson;
     private int alarmId = -1;
+    private Notification.Action[] actions;
 
 
     //----------------------------- Lifecycle methods --------------------------------------------//
@@ -88,7 +89,8 @@ public class AlarmTriggerActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getWindow().getDecorView().setBackgroundColor(0xff222222);
-
+        NotificationManager notifManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        getActions(notifManager);
 
         View decorView = getWindow().getDecorView();
         // Hide the status bar.
@@ -122,7 +124,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
         btnSnoozeAlarm = binding.btnSnoozeAlarm;
         btnOpenAlarm = binding.btnOpenAlarm;
         ivAlarm = binding.ivAlarm;
-        
+
         Intent intent = getIntent();
 
         /* This can produce npe
@@ -313,14 +315,12 @@ public class AlarmTriggerActivity extends AppCompatActivity {
         if (handler != null && silenceRunnable != null)
             handler.removeCallbacks(silenceRunnable);
 
-        Context context = getApplicationContext();
-
-        NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        launchAction(notifManager, action);
+        NotificationManager notifManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        launchAction(action);
         finish();
     }
 
-    private void launchAction(NotificationManager notifManager, int action) {
+    private void getActions(NotificationManager notifManager){
         StatusBarNotification[] sbns = notifManager.getActiveNotifications();
 
         for (StatusBarNotification sbn : sbns) {
@@ -331,14 +331,24 @@ public class AlarmTriggerActivity extends AppCompatActivity {
                 }
                 Notification n = sbn.getNotification();
                 if (n.actions.length > 0) {
-                    PendingIntent pi = n.actions[action].actionIntent;
-                    if (pi != null) {
-                        pi.send();
-                    }
+                    actions = n.actions;
                 }
+                notifManager.cancel(sbn.getId());
             } catch (Exception e) {
             }
         }
+    }
+
+    private void launchAction(int action) {
+        try{
+            PendingIntent pi = actions[action].actionIntent;
+            if (pi != null) {
+                pi.send();
+            }
+        }catch (Exception ex){
+            Log.e(TAG, "launchAction: "+ ex.getMessage());
+        }
+
     }
 
     public void snoozeAlarm() {
