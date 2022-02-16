@@ -246,10 +246,14 @@ public class AlarmTriggerActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        finish();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        finish();
+        System.exit(0);
+    }
 
 
     //------------------------------- Get Silence Timeout ----------------------------------------//
@@ -315,7 +319,6 @@ public class AlarmTriggerActivity extends AppCompatActivity {
         if (handler != null && silenceRunnable != null)
             handler.removeCallbacks(silenceRunnable);
 
-        NotificationManager notifManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         launchAction(action);
         finish();
     }

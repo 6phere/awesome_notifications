@@ -37,6 +37,8 @@
             android:noHistory="true"
             android:launchMode="singleInstance"
             android:clearTaskOnLaunch="true"
+            android:excludeFromRecents="true"
+            android:autoRemoveFromRecents="true"
             />
 
         <!-- <service
