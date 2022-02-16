@@ -63,6 +63,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
     // vars
     private static final String TAG = "AlarmTriggerActivity";
     private boolean isSnoozed = false;
+    private boolean actionLaunched = false;
     private Handler handler;
     private Runnable silenceRunnable;
     private SharedPreferences sharedPref;
@@ -251,8 +252,10 @@ public class AlarmTriggerActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        finish();
-        System.exit(0);
+        if(!actionLaunched){
+            finish();
+            System.exit(0);
+        }
     }
 
 
@@ -347,6 +350,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
             PendingIntent pi = actions[action].actionIntent;
             if (pi != null) {
                 pi.send();
+                actionLaunched = true;
             }
         }catch (Exception ex){
             Log.e(TAG, "launchAction: "+ ex.getMessage());
