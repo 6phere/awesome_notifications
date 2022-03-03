@@ -180,7 +180,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
 
                 mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
                 afd.close();
-            }else{
+            } else {
                 Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
                 if (alarmUri == null) {
                     alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
@@ -250,9 +250,9 @@ public class AlarmTriggerActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if(!actionLaunched){
+    public void onStop() {
+        super.onStop();
+        if (!actionLaunched) {
             finish();
             System.exit(0);
         }
@@ -326,7 +326,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
         finish();
     }
 
-    private void getActions(NotificationManager notifManager){
+    private void getActions(NotificationManager notifManager) {
         StatusBarNotification[] sbns = notifManager.getActiveNotifications();
 
         for (StatusBarNotification sbn : sbns) {
@@ -346,14 +346,14 @@ public class AlarmTriggerActivity extends AppCompatActivity {
     }
 
     private void launchAction(int action) {
-        try{
+        try {
             PendingIntent pi = actions[action].actionIntent;
             if (pi != null) {
                 pi.send();
                 actionLaunched = true;
             }
-        }catch (Exception ex){
-            Log.e(TAG, "launchAction: "+ ex.getMessage());
+        } catch (Exception ex) {
+            Log.e(TAG, "launchAction: " + ex.getMessage());
         }
 
     }
