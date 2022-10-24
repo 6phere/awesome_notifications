@@ -39,6 +39,7 @@
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:autoRemoveFromRecents="true"
+            android:exported="false"
             />
 
         <!-- <service
