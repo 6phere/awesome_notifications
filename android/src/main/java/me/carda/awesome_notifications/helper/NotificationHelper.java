@@ -36,7 +36,7 @@ public class NotificationHelper {
         Log.i(TAG, "deliverNotification: Putting alarmIdKey: " + mAlarmId);
         fullScreenIntent.putExtra("alarmIdKey", mAlarmId);
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(mContext,
-                0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                0, fullScreenIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Display Alarm Time in notification
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm aa",
