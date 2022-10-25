@@ -83,14 +83,18 @@ public class NotificationBuilder {
                 context,
                 pushNotification.content.id,
                 intent,
-                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ?
+                                    PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT :
+                                    PendingIntent.FLAG_UPDATE_CURRENT
         );
 
         PendingIntent pendingDeleteIntent = PendingIntent.getBroadcast(
                 context,
                 pushNotification.content.id,
                 deleteIntent,
-                PendingIntent.FLAG_CANCEL_CURRENT
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ?
+                        PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_CANCEL_CURRENT :
+                        PendingIntent.FLAG_CANCEL_CURRENT
         );
 
         NotificationCompat.Builder builder = getNotificationBuilderFromModel(context, pushNotification, pendingIntent, pendingDeleteIntent);
@@ -444,7 +448,9 @@ public class NotificationBuilder {
                             context,
                             pushNotification.content.id,
                             actionIntent,
-                            PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ?
+                                    PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT :
+                                    PendingIntent.FLAG_UPDATE_CURRENT
                     );
 
                 } else if (buttonProperties.buttonType == ActionButtonType.DisabledAction) {
@@ -470,7 +476,9 @@ public class NotificationBuilder {
                             context,
                             pushNotification.content.id,
                             actionIntent,
-                            PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ?
+                                    PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT :
+                                    PendingIntent.FLAG_UPDATE_CURRENT
                     );
                 }
             }
