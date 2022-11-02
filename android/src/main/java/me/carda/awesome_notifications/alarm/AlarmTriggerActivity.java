@@ -1,4 +1,4 @@
-package me.carda.awesome_notifications.notifications.activities;
+package android.src.main.java.me.carda.awesome_notifications.alarm;
 
 import android.app.KeyguardManager;
 import android.app.KeyguardManager.KeyguardLock;
