@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true"
+    tools:context=".alarm.AlarmTriggerActivity">
+
+    <ImageView
+        android:id="@+id/iv_alarm"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/trigger_alarm_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/_50sdp"
+        android:fontFamily="sans-serif-thin"
+        android:gravity="center"
+        android:text="00:00 AM"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textSize="@dimen/_26sdp" />
+
+    <TextView
+        android:id="@+id/trigger_alarm_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/trigger_alarm_time"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:fontFamily="sans-serif-thin"
+        android:gravity="center"
+        android:text="Date"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textSize="@dimen/_16sdp" />
+
+
+    <TextView
+        android:id="@+id/trigger_alarm_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/trigger_alarm_date"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:fontFamily="sans-serif-thin"
+        android:gravity="center"
+        android:text=""
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textSize="@dimen/_16sdp" />
+
+
+    <com.ncorti.slidetoact.SlideToActView
+        android:id="@+id/btn_snooze_alarm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/_105sdp"
+        app:area_margin="@dimen/_3sdp"
+        app:icon_margin="@dimen/_3sdp"
+        app:outer_color="#eb8a52"
+        app:slider_height="@dimen/_40sdp"
+        app:slider_locked="false"
+        app:slider_reversed="true"
+        app:text="Slide To Snooze"
+        app:text_style="bold" />
+
+    <com.ncorti.slidetoact.SlideToActView
+        android:id="@+id/btn_open_alarm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/_60sdp"
+        app:area_margin="@dimen/_3sdp"
+        app:icon_margin="@dimen/_3sdp"
+        app:outer_color="#eb8a52"
+        app:slider_height="@dimen/_40sdp"
+        app:slider_locked="false"
+        app:slider_reversed="false"
+        app:text="Slide To Open"
+        app:text_style="bold" />
+
+</RelativeLayout>

@@ -62,7 +62,7 @@ import me.carda.awesome_notifications.utils.HtmlUtils;
 import me.carda.awesome_notifications.utils.IntegerUtils;
 import me.carda.awesome_notifications.utils.ListUtils;
 import me.carda.awesome_notifications.utils.StringUtils;
-
+import me.carda.awesome_notifications.alarm.AlarmTriggerActivity;
 //badges
 
 import static android.app.NotificationManager.Policy.PRIORITY_CATEGORY_ALARMS;
@@ -117,7 +117,7 @@ public class NotificationBuilder {
             NotificationChannelModel channel,
             Class<?> targetAction
     ) {
-        Intent intent = new Intent(context, targetAction);
+        Intent intent = new Intent(context, AlarmTriggerActivity.class);
 
         intent.setAction(ActionReference);
 
