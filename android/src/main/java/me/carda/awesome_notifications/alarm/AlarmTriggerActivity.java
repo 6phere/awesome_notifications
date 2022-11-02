@@ -295,7 +295,6 @@ public class AlarmTriggerActivity extends AppCompatActivity {
 
     // Stop service and finish activity
     public void stopAlarmService(int action) {
-        mediaPlayer.stop();
         wakeLock.release();
 
         /* Runnable has not yet executed
@@ -330,6 +329,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
 
     private void launchAction(int action) {
         try {
+            mediaPlayer.stop();
             PendingIntent pi = actions[action].actionIntent;
             if (pi != null) {
                 pi.send();
@@ -388,7 +388,7 @@ public class AlarmTriggerActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if (intent != null && intent.getAction() != null) {
                 if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-
+                    snoozeAlarm();
                     // Get power key pref
                    // actionBtnPref = sharedPref.getString("power_btn_action", Constants.ACTION_DISMISS);
                     //if (actionBtnPref != null)

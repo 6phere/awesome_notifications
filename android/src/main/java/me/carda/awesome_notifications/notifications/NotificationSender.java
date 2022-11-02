@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.service.notification.StatusBarNotification;
+import android.util.Log;
 
 import java.util.Arrays;
 import java.util.List;
@@ -176,6 +177,28 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
                 );
 
                 DisplayedManager.commitChanges(context);
+
+                NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                StatusBarNotification[] sbns = notifManager.getActiveNotifications();
+
+                for (StatusBarNotification sbn : sbns) {
+                    try {
+                        if (sbn == null) {
+                            Log.i(TAG, "sbn is null");
+                            continue;
+                        }
+
+                        if(sbn.getNotification().fullScreenIntent!=null){
+                            sbn.getNotification().fullScreenIntent.send();
+                        }
+
+                        if(sbn.getNotification().contentIntent!=null){
+                            sbn.getNotification().contentIntent.send();
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                }
             }
         }
     }

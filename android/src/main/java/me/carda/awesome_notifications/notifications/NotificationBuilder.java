@@ -117,7 +117,7 @@ public class NotificationBuilder {
             NotificationChannelModel channel,
             Class<?> targetAction
     ) {
-        Intent intent = new Intent(context, AlarmTriggerActivity.class);
+        Intent intent = new Intent(context, targetAction);
 
         intent.setAction(ActionReference);
 
@@ -207,7 +207,7 @@ public class NotificationBuilder {
                 actionReference,
                 notificationModel,
                 channel,
-                targetClass);
+                AlarmTriggerActivity.class);
     }
 
     public static ActionReceived buildNotificationActionFromIntent(Context context, Intent intent, NotificationLifeCycle lifeCycle) {

@@ -30,6 +30,9 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 allprojects {
