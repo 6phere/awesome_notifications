@@ -1,4 +1,4 @@
-package android.src.main.java.me.carda.awesome_notifications.alarm;
+package me.carda.awesome_notifications.alarm;
 
 import android.app.KeyguardManager;
 import android.app.KeyguardManager.KeyguardLock;
@@ -34,7 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Map;
 
-import me.carda.awesome_notifications.Utils.Constants.Constants;
+//import me.carda.awesome_notifications.Utils.Constants.Constants;
 import me.carda.awesome_notifications.databinding.ActivityAlarmTriggerBinding;
 import me.carda.awesome_notifications.utils.JsonUtils;
 import me.carda.awesome_notifications.Definitions;
@@ -373,9 +373,9 @@ public class AlarmTriggerActivity extends AppCompatActivity {
                 keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
 
             // Get volume key pref
-            actionBtnPref = sharedPref.getString("volume_btn_action", Constants.ACTION_DO_NOTHING);
-            if (actionBtnPref != null)
-                actionBtnHandler(actionBtnPref);
+            //actionBtnPref = sharedPref.getString("volume_btn_action", Constants.ACTION_DO_NOTHING);
+            //if (actionBtnPref != null)
+            //    actionBtnHandler(actionBtnPref);
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -390,9 +390,9 @@ public class AlarmTriggerActivity extends AppCompatActivity {
                 if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
 
                     // Get power key pref
-                    actionBtnPref = sharedPref.getString("power_btn_action", Constants.ACTION_DISMISS);
-                    if (actionBtnPref != null)
-                        actionBtnHandler(actionBtnPref);
+                   // actionBtnPref = sharedPref.getString("power_btn_action", Constants.ACTION_DISMISS);
+                    //if (actionBtnPref != null)
+                    //    actionBtnHandler(actionBtnPref);
                 }
             }
         }
@@ -400,16 +400,16 @@ public class AlarmTriggerActivity extends AppCompatActivity {
 
     private void actionBtnHandler(String action) {
         switch (action) {
-            case Constants.ACTION_MUTE:
+            //case Constants.ACTION_MUTE:
                 // Mute is handled by MuteActionReceiver in AlarmService
-                sendBroadcast(new Intent().setAction(Constants.ACTION_MUTE));
-                break;
-            case Constants.ACTION_DISMISS:
-                stopAlarmService(0);
-                break;
-            case Constants.ACTION_SNOOZE:
-                snoozeAlarm();
-                break;
+                //sendBroadcast(new Intent().setAction(Constants.ACTION_MUTE));
+              //  break;
+            //case Constants.ACTION_DISMISS:
+              //  stopAlarmService(0);
+                //break;
+            //case Constants.ACTION_SNOOZE:
+              //  snoozeAlarm();
+               // break;
         }
     }
 }
