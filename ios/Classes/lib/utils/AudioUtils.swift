@@ -98,8 +98,8 @@ public class AudioUtils : MediaUtils {
             }*/
         }
         
-        private static func getSoundFromAsset(_ mediaPath:String) -> UNNotificationSound? {
-            let mediaPath:String? = AudioUtils.cleanMediaPath(mediaPath)
+        private static func getSoundFromAsset(_ SoundPath:String) -> UNNotificationSound? {
+            let mediaPath:String? = AudioUtils.cleanMediaPath(SoundPath)
 
             if(StringUtils.isNullOrEmpty(mediaPath)){ return nil }
             
@@ -116,12 +116,12 @@ public class AudioUtils : MediaUtils {
             }*/
         }
         
-        private static func getSoundFromResource(_ mediaPath:String) -> UNNotificationSound? {
-            var mediaPath:String? = AudioUtils.cleanMediaPath(mediaPath)
+        private static func getSoundFromResource(_ SoundPath:String) -> UNNotificationSound? {
+            var mediaPath:String? = AudioUtils.cleanMediaPath(SoundPath)
             
             //do {
                 if mediaPath!.replaceRegex("^.*\\/([^\\/]+)$", replaceWith: "$1") {
-                    var topPath:String? = Bundle.main.url(forResource: mediaPath!, withExtension: "aiff")?.absoluteString
+                    var topPath:String? = Bundle.main.url(forResource: mediaPath!, withExtension: "caf")?.absoluteString
                     
                     if ((topPath?.replaceRegex("^.*\\/([^\\/]+)$", replaceWith: "$1")) != nil){
                         return UNNotificationSound(named: UNNotificationSoundName(rawValue: topPath!))
