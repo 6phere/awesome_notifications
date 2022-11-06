@@ -79,8 +79,8 @@ public class AudioUtils : MediaUtils {
             return nil
         }
         
-        private static func getSoundFromFile(_ mediaPath:String) -> UNNotificationSound? {
-            let mediaPath:String? = AudioUtils.cleanMediaPath(mediaPath)
+        private static func getSoundFromFile(_ SoundPath:String) -> UNNotificationSound? {
+            let mediaPath:String? = AudioUtils.cleanMediaPath(SoundPath)
             
             if(StringUtils.isNullOrEmpty(mediaPath)){ return nil }
             

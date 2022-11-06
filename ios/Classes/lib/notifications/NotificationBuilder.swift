@@ -422,7 +422,7 @@ public class NotificationBuilder {
     }
 
     private static func setSound(notificationModel:NotificationModel, channel:NotificationChannelModel, content:UNMutableNotificationContent){
-        if (notificationModel.content!.playSound ?? false) && (channel.playSound ?? false) {
+        if ((channel.playSound ?? false) {
             
             if(!StringUtils.isNullOrEmpty(notificationModel.content!.customSound)){
                 content.sound = AudioUtils.getSoundFromSource(SoundPath: notificationModel.content!.customSound!)
