@@ -24,7 +24,7 @@ void main() async {
 }
 
 class App extends StatefulWidget {
-  const App({super.key});
+  const App();
 
   static String name = 'Awesome Notifications - Example App';
   static Color mainColor = const Color(0xFF9D50DD);

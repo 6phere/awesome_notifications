@@ -20,7 +20,7 @@ import 'package:numberpicker/numberpicker.dart';
 import 'package:vibration/vibration.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage();
 
   @override
   _HomePageState createState() => _HomePageState();

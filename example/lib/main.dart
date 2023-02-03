@@ -233,7 +233,7 @@ class NotificationController {
 ///  *********************************************
 ///
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  const MyApp();
 
   // The navigator key is necessary to navigate using static methods
   static final GlobalKey<NavigatorState> navigatorKey =
@@ -304,7 +304,7 @@ class _AppState extends State<MyApp> {
 ///  *********************************************
 ///
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({required this.title});
   final String title;
 
   @override

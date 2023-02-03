@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:ui' as ui show Codec;
 import 'dart:ui';
 
@@ -37,26 +38,23 @@ class ResourceImage extends ImageProvider<ResourceImage> {
   @override
   @protected
   ImageStreamCompleter loadBuffer(
-      ResourceImage key, DecoderBufferCallback decode) {
+      ResourceImage key, DecoderCallback decode) {
     return MultiFrameImageStreamCompleter(
       codec: _loadAsync(key, decode),
       scale: key.scale,
     );
   }
 
-  Future<ui.Codec> _loadAsync(
-      ResourceImage key, DecoderBufferCallback decode) async {
+  Future<ui.Codec> _loadAsync(ResourceImage key, DecoderCallback decode) async {
     assert(key == this);
-    Uint8List? bytes =
-        await AwesomeNotifications().getDrawableData(drawablePath);
+    Uint8List? bytes;
 
-    if (bytes?.lengthInBytes == 0) {
-      throw Exception('image is invalid');
-    }
+    AwesomeNotifications awesomeNotifications = AwesomeNotifications();
+    bytes = await awesomeNotifications.getDrawableData(drawablePath);
 
-    final ImmutableBuffer buffer = await ImmutableBuffer.fromUint8List(bytes!);
-    return decode(buffer);
+    return decode(bytes!);
   }
+
 
   @override
   bool operator ==(Object other) {
@@ -72,4 +70,12 @@ class ResourceImage extends ImageProvider<ResourceImage> {
   @override
   String toString() =>
       '${objectRuntimeType(this, 'ResourceImage')}($drawablePath, scale: $scale)';
+
+  @override
+  ImageStreamCompleter load(ResourceImage key, DecoderCallback decode) {
+    return MultiFrameImageStreamCompleter(
+      codec: _loadAsync(key, decode),
+      scale: key.scale,
+    );
+  }
 }
