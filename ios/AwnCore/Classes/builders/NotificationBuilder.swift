@@ -391,7 +391,7 @@ public class NotificationBuilder {
         switch notificationModel.importance ?? .Default {
             
             case .Default, .High, .Max:
-            if (notificationModel.content!.playSound ?? false) && (channel.playSound ?? false) {
+            if (channel.playSound ?? false) {
                 
                 if(!StringUtils.shared.isNullOrEmpty(notificationModel.content!.customSound)){
                     content.sound = AudioUtils.shared.getSoundFromSource(SoundPath: notificationModel.content!.customSound!)

@@ -23,9 +23,9 @@ public class FlutterAudioUtils : AudioUtils {
         AudioUtils.instance = FlutterAudioUtils(registrar:registrar)
     }
     
-    open override func getSoundFromAsset(_ mediaPath:String) -> UNNotificationSound? {
+    open override func getSoundFromAsset(_ SoundPath:String) -> UNNotificationSound? {
         
-        let mediaPath:String? = cleanMediaPath(mediaPath)
+        let mediaPath:String? = cleanMediaPath(SoundPath)
 
         if(StringUtils.shared.isNullOrEmpty(mediaPath)){ return nil }
         

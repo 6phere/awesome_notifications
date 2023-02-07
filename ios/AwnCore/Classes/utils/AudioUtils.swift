@@ -110,16 +110,16 @@ open class AudioUtils: MediaUtils {
         return UNNotificationSound.default
     }
     
-    open func getSoundFromAsset(_ mediaPath:String) -> UNNotificationSound? {
+    open func getSoundFromAsset(_ SoundPath:String) -> UNNotificationSound? {
         return nil
     }
     
-    open func getSoundFromResource(_ mediaPath:String) -> UNNotificationSound? {
-        var mediaPath:String? = cleanMediaPath(mediaPath)
+    open func getSoundFromResource(_ SoundPath:String) -> UNNotificationSound? {
+        var mediaPath:String? = cleanMediaPath(SoundPath)
         
         //do {
             if mediaPath!.replaceRegex("^.*\\/([^\\/]+)$", replaceWith: "$1") {
-                var topPath:String? = Bundle.main.url(forResource: mediaPath!, withExtension: "aiff")?.absoluteString
+                var topPath:String? = Bundle.main.url(forResource: mediaPath!, withExtension: "caf")?.absoluteString
                 
                 if ((topPath?.replaceRegex("^.*\\/([^\\/]+)$", replaceWith: "$1")) != nil){
                     return UNNotificationSound(named: UNNotificationSoundName(rawValue: topPath!))
